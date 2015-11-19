@@ -10,6 +10,8 @@ class Api::V1::ImagesController < ApplicationController
   before_filter :authenticate, :except => [:index, :show]
   before_action :set_object
 
+  api :GET, '/v1/listings/:listing_slug/images', "Show all images for a specific listing."
+  param :listing_slug, String, "The listing's slug.", :required => true
   def index
     ##
     # Index will only display all of a listing's images
@@ -17,6 +19,9 @@ class Api::V1::ImagesController < ApplicationController
     render :json => @object.images, :status => :ok
   end
 
+  api :GET, '/v1/listings/:listing_slug/images/:id', "Show a specific image for a specific listing."
+  param :listing_slug, String, "The listing's slug.", :required => true
+  param :id, :number, "The image's id.", :required => true
   def show
     ##
     # Show will only display a specified Listing's image
@@ -25,6 +30,14 @@ class Api::V1::ImagesController < ApplicationController
     render :json => image, :status => :ok
   end
 
+
+  # api :PUT, '/v1/users/:user_slug/images/:id', "Update user's profile image."
+  # param :user_slug, String, "The user's slug."
+  # param :id, :number, "The image's id."
+
+  api :PUT, '/v1/listings/:listing_slug/images/:id', "Update a specific image for a specific listing."
+  param :listing_slug, String, "The listing's slug.", :required => true
+  param :id, :number, "The image's id.", :required => true
   def update
     image = get_image_from_model(params[:id])
 
@@ -35,6 +48,10 @@ class Api::V1::ImagesController < ApplicationController
     end
   end
 
+
+  api :DELETE, '/v1/listings/:listing_slug/images/:id', "Delete a specific listing's image."
+  param :listing_slug, String, "The listing's slug.", :required => true
+  param :id, :number, "The image's id.", :required => true
   def destroy
     image = get_image_from_model(params[:id])
 
@@ -44,6 +61,7 @@ class Api::V1::ImagesController < ApplicationController
       render :json => {"errors" => "Image could not be deleted."}, :status => :unprocessable_entity
     end
   end
+  
 
   private
   def image_params

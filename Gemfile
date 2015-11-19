@@ -25,6 +25,8 @@ gem 'omniauth-stripe-connect'
 
 gem 'responders'
 
+gem 'apipie-rails'
+
 gem "active_model_serializers", github: "rails-api/active_model_serializers"
 
 # To use ActiveModel has_secure_password

@@ -9,6 +9,10 @@ class Reservation < ActiveRecord::Base
 
   accepts_nested_attributes_for :rate
 
+  def self.example
+    JSON.pretty_generate({"reservation":{"start": "Thu, 19 Nov 2015 03:06:07 -0500","end": "Sat, 21 Nov 2015 03:06:07 -0500","reason": "I want to, that's why.","rate_attributes":{"amount": 15,"time_type": "hourly"}}})
+  end
+
   protected
   def generate_token
     self.token = loop do

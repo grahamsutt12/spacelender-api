@@ -1,5 +1,11 @@
 class Api::V1::SessionsController < ApplicationController
 
+  api :POST, "/v1/sessions", "Logs the user in."
+  description "This call will return the Auth Token needed to authenticate requests."
+  example JSON.pretty_generate({"session": {"email": "johndoe@example.com", "password": "secret123"}})
+  param :email, String, "The email for the user logging in.", :required => true
+  param :password, String, "The password for the user logging in. Password must be at least 8 characters long.", :required => true
+
   def create
     if user = User.authenticate(params[:session][:email], params[:session][:password])
       if user.auth_token.nil? || user.auth_token.blank?
@@ -17,6 +23,11 @@ class Api::V1::SessionsController < ApplicationController
       render :json => {"errors": "Invalid email or password."}, :status => :unprocessable_entity
     end
   end
+
+
+
+  api :DELETE, "/v1/sessions/:auth_token", "Logs the user out. This will nilify the user's Authorization token."
+  param :auth_token, String, "The user's Authorization token.", :required => true
 
   def destroy
     user = User.find_by_auth_token(params[:id])
