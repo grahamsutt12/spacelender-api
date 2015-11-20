@@ -18,3 +18,8 @@
 
 # Ignore application configuration
 /config/application.yml
+/config/secrets.yml
+/config/database.yml
+/config/cloudinary.yml
+/config/deploy.rb
+/config/deploy/production.rb
