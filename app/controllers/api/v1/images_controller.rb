@@ -11,7 +11,8 @@ class Api::V1::ImagesController < ApplicationController
   before_action :set_object
 
   api :GET, '/v1/listings/:listing_slug/images', "Show all images for a specific listing."
-  param :listing_slug, String, "The listing's slug.", :required => true
+  example Image.example_response("index")
+  description "This request only returns images for listings, not users. Below is an example of the response."
   def index
     ##
     # Index will only display all of a listing's images
@@ -19,9 +20,11 @@ class Api::V1::ImagesController < ApplicationController
     render :json => @object.images, :status => :ok
   end
 
+
+
   api :GET, '/v1/listings/:listing_slug/images/:id', "Show a specific image for a specific listing."
-  param :listing_slug, String, "The listing's slug.", :required => true
-  param :id, :number, "The image's id.", :required => true
+  example Image.example_response("show")
+  description "This request only returns an image from a listing, not from a user. Below is an example of the response."
   def show
     ##
     # Show will only display a specified Listing's image
@@ -36,8 +39,14 @@ class Api::V1::ImagesController < ApplicationController
   # param :id, :number, "The image's id."
 
   api :PUT, '/v1/listings/:listing_slug/images/:id', "Update a specific image for a specific listing."
-  param :listing_slug, String, "The listing's slug.", :required => true
-  param :id, :number, "The image's id.", :required => true
+  example Image.example_request
+  description "The only thing about an image that can be updated is its caption. To swap a photo, you have to first drop a picture and then create a new one."
+  meta :important => "To update a users image, use this request:   PUT /v1/users/:user_slug/images/:id"
+  see "images#destroy", "Deleting an image."
+  param :image, Hash do
+    param :caption, String, "The image's caption."
+  end
+    
   def update
     image = get_image_from_model(params[:id])
 
@@ -50,8 +59,10 @@ class Api::V1::ImagesController < ApplicationController
 
 
   api :DELETE, '/v1/listings/:listing_slug/images/:id', "Delete a specific listing's image."
-  param :listing_slug, String, "The listing's slug.", :required => true
-  param :id, :number, "The image's id.", :required => true
+  example JSON.pretty_generate({"success" => "Image was succesfully deleted."})
+  example JSON.pretty_generate({"errors" => "Image could not be deleted."})
+  description "Below are the expected responses for successfully or unsuccessfully deleting an image."
+  meta :important => "To delete a users image, use this request:   DELETE /v1/users/:user_slug/images/:id"
   def destroy
     image = get_image_from_model(params[:id])
 

@@ -2,8 +2,8 @@ class Api::V1::PaymentsController < ApplicationController
   before_filter :authenticate
 
   api :POST, '/v1/listings/:listing_slug/reservations/:reservation_token/payments', "Submit a payment for a reservation."
-  param :listing_slug, String, "The listing's slug.", :required => true
-  param :reservation_slug, String, "The reservation's token identifier.", :required => true
+  description "An example will be provided soon."
+
   def create
     reservation = @current_user.listings.find(params[:listing_id]).reservations.find_by_token(params[:reservation_id])
     payment = reservation.build_payment(payment_params)
@@ -19,9 +19,7 @@ class Api::V1::PaymentsController < ApplicationController
 
 
   api :GET, '/v1/listings/:listing_slug/reservations/:reservation_token/payments/:payment_token', "Refund an existing approved payment."
-  param :listing_slug, String, "The listing's slug.", :required => true
-  param :reservation_slug, String, "The reservation's token identifier.", :required => true
-  param :payment_token, String, "The payment's token identifier.", :required => true
+  description "Refunds an already existing and approved payment. Payments can only be refunded if the reservation was cancelled prior to the start date."
   def refund
     payment = @current_user.listings.find(params[:listing_id]).reservations.find_by_token(params[:reservation_id]).payment
     RefundPaymentWorker.perform_async(payment.id)

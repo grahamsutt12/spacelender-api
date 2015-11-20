@@ -11,10 +11,11 @@ Rails.application.routes.draw do
         resources :messages, :except => [:new, :edit]
         resources :images, :only => [:update, :destroy]
         resources :reports, :only => [:create, :show]
+        resources :cards, :only => [:index, :show, :create, :destroy]
       end
 
       resources :listings, :except => [:new, :edit] do
-        resources :reservations, :only => [:show, :create, :destroy] do
+        resources :reservations, :only => [:index, :show, :create, :destroy] do
           resources :payments, :only => [:create] do
             member do
               get 'refund'

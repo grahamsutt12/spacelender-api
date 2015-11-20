@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   enum :role => [:normal, :employee, :admin]
 
   has_many :reports
+  has_many :cards, :dependent => :destroy
   has_many :listings, :dependent => :destroy
   has_many :sent_messages, :class_name => "Message", :foreign_key => "sender_id"
   has_many :received_messages, :class_name => "Message", :foreign_key => "receiver_id"
@@ -65,6 +66,14 @@ class User < ActiveRecord::Base
     begin
       self.auth_token = SecureRandom.hex
     end while self.class.exists?(:auth_token => auth_token)
+  end
+
+  def self.example_response
+    JSON.pretty_generate({"email": "grahamsutton1@gmail.com","role": "employee","first_name": "Graham","last_name": "Sutton","slug": "graham-283384","active": true,"listings": [{"name": "So Cool Listing","description": "This is the coolest listing","token": "OILKxIySLYxQ_8QYGEeEnA","slug": "so-cool-listing"},{"name": "Graham Listing","description": "This is Graham's listing","token": "XasJjf2ojEbpU7tN_WGX7Q","slug": "graham-listing"}],"image": {"file_name": "IMG_8910","url": "http://res.cloudinary.com/spacelender-cloud/image/upload/v1447497341/aqcqtati2zxjlcsodzw7.jpg","caption": nil}})
+  end
+
+  def self.example_request
+    JSON.pretty_generate({"user":{"first_name": "Steg","last_name": "Sirlinsky","email": "grahamsutton2@gmail.com","email_confirmation": "grahamsutton2@gmail.com","password": "secret123","password_confirmation": "secret123","tos": true,"image_attributes":{"path": "/Users/graham1/Downloads/IMG_8910.jpg"}}})
   end
 
   protected

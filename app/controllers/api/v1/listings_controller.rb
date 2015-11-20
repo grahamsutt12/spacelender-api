@@ -2,6 +2,8 @@ class Api::V1::ListingsController < ApplicationController
   before_filter :authenticate, :except => [:index, :show]
 
   api :GET, '/v1/listings', "Show all listings. Does not require authentication."
+  description "Returns an array of all listing objects."
+  see "listings#show", "To see the individual format of a single listing."
 
   def index
     render :json => Listing.all, :status => :ok
@@ -85,6 +87,9 @@ class Api::V1::ListingsController < ApplicationController
 
 
   api :DELETE, '/v1/listings/:listing_slug', "Delete a listing."
+  description "Below is an example of the expected response either when a listing successfully or unsuccessfully deleted."
+  example JSON.pretty_generate({"success": "The listing was succesfully deleted."})
+  example JSON.pretty_generate({"errors": "The listing could not be deleted."})
 
   def destroy
     listing = @current_user.listings.find(params[:id])

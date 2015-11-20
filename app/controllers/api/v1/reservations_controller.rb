@@ -1,12 +1,23 @@
 class Api::V1::ReservationsController < ApplicationController
   before_filter :authenticate
 
+
+  api :GET, '/v1/listings/:listing_slug/reservations', "Show all reservations for a specific listing."
+  description "Below is an example of an expected response. Returns Array."
+  example Reservation.example_response("index")
+  def index
+    reservations = @current_user.listings.find(params[:listing_id]).reservations
+    render :json => reservations, :status => :ok
+  end
+
+
+
   api :GET, "/v1/listings/:listing_slug/reservations/:reservation_token", "Show a specific reservation for specific listing."
-  param :listing_slug, String, "The listing's slug.", :required => true
-  param :reservation_token, String, "The reservation's reference token.", :required => true
+  description "Below is an example of an expected repsonse. Returns Hash."
+  example Reservation.example_response("show")
   def show
-    listings = @current_user.listings
-    reservation = listings.find_by_token(params[:id])
+    listing = @current_user.listings.find(params[:listing_id])
+    reservation = listing.reservations.find_by_token(params[:id])
 
     render :json => reservation, :status => :ok
   end
@@ -14,7 +25,8 @@ class Api::V1::ReservationsController < ApplicationController
 
 
   api :POST, "/v1/listings/:listing_slug/reservations", "Create a reservation for a specific listing."
-  example Reservation.example
+  description "It should be noted that a reservation only accepts ONE \"rate\" hash, unlike listings which accept an array. Please keep this in mind."
+  example Reservation.example_request
   param :reservation, Hash do
     param :start, String, "The start datetime of the reservation. Pass in 12AM if the reservation rate is daily, weekly, or monthly. If hourly, then specify the hour and minutes.", :required => true
     param :end, String, "The end datetime of the reservation. Pass in 12AM if the reservation rate is daily, weekly, or monthly. If hourly, then specify the hour and minutes.", :required => true
@@ -41,9 +53,9 @@ class Api::V1::ReservationsController < ApplicationController
 
 
   api :DELETE, "/v1/listings/:listing_slug/reservations/:reservation_token", "Cancel a reservation for a specific listing."
-  param :listing_slug, String, "The listing's slug.", :required => true
-  param :reservation_token, String, "The reservation's reference token.", :required => true
-  description "This cancels a specified reservation. It does not completely delete it. The reservation is needed for record keeping."
+  description "This cancels a specified reservation. It does not completely delete it. The reservation is needed for record keeping. Below are examples of the response you can expect for successfully or unsuccessfully canceling a reservation."
+  example JSON.pretty_generate({"success": "Reservation was succesfully canceled."})
+  example JSON.pretty_generate({"errors": "Reservation was unable to be canceled."})
   def destroy
     reservation = Reservation.find_by_token(params[:id])
     reservation.canceled!
