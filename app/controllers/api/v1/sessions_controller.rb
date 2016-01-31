@@ -14,7 +14,8 @@ class Api::V1::SessionsController < ApplicationController
         if user.active && user.confirm_token.nil?
           user.generate_auth_token
           user.save
-          render :json => user, :except => excluded_user_params, :status => :ok
+
+          render :json => user, :meta => {:auth_token => user.auth_token}, :status => :ok
         else
           render :json => {"errors": "Account is not active. If you're new, you can activate your account by visitng your email at #{user.email}."}, :status => :unauthorized
         end

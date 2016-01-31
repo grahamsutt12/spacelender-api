@@ -1,6 +1,10 @@
 class Api::V1::UserMailer < ApplicationMailer
   default from: "SpaceLender"
 
+  ##
+  # This email sends the Activation Code needed for newly registered users
+  # to activate their accounts. 
+  ##
   def sign_up_confirmation(user)
     @user = user
     mail(:to => @user.email, 

@@ -48,6 +48,10 @@ class User < ActiveRecord::Base
     Message.where("sender_id = ? OR receiver_id = ?", self.slug, self.slug)
   end
 
+  def reservations
+    Reservation.where("booked_by = ?", self.slug)
+  end
+
   def email_activate
     self.active = true
     self.confirm_token = nil

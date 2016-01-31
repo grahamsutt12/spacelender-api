@@ -5,23 +5,23 @@ class Api::V1::ReservationsController < ApplicationController
   api :GET, '/v1/listings/:listing_slug/reservations', "Show all reservations for a specific listing."
   description "Below is an example of an expected response. Returns Array."
   example Reservation.example_response("index")
+
   def index
     reservations = @current_user.listings.find(params[:listing_id]).reservations
     render :json => reservations, :status => :ok
   end
 
 
-
   api :GET, "/v1/listings/:listing_slug/reservations/:reservation_token", "Show a specific reservation for specific listing."
   description "Below is an example of an expected repsonse. Returns Hash."
   example Reservation.example_response("show")
+
   def show
     listing = @current_user.listings.find(params[:listing_id])
     reservation = listing.reservations.find_by_token(params[:id])
 
     render :json => reservation, :status => :ok
   end
-
 
 
   api :POST, "/v1/listings/:listing_slug/reservations", "Create a reservation for a specific listing."
@@ -41,6 +41,7 @@ class Api::V1::ReservationsController < ApplicationController
   def create
     listing = @current_user.listings.find(params[:listing_id])
     reservation = listing.reservations.build(reservation_params)
+    reservation.booked_by = @current_user.slug
 
     if reservation.save
       ReservationRequestedWorker.perform_async(listing.user.slug, reservation.token)
@@ -51,11 +52,31 @@ class Api::V1::ReservationsController < ApplicationController
   end
 
 
+  api :GET, "/v1/users/:user_slug/reservations/pending", "Get the user's pending reservations."
+  description "This call gets all of the current user's PENDING reservations."
+  see 'listings#index', "View an example response"
+
+  def pending
+    reservations = @current_user.reservations.select { |reservation| reservation unless reservation.status != "accepted"}
+    render :json => reservations, :status => :ok
+  end
+
+
+  # TODO: As a Lister, I want to be able to accept reservation requests.
+  def accept
+  end
+
+
+  # TODO: As a Lister, I want to be able to decline reservation requests.
+  def decline
+  end
+
 
   api :DELETE, "/v1/listings/:listing_slug/reservations/:reservation_token", "Cancel a reservation for a specific listing."
   description "This cancels a specified reservation. It does not completely delete it. The reservation is needed for record keeping. Below are examples of the response you can expect for successfully or unsuccessfully canceling a reservation."
   example JSON.pretty_generate({"success": "Reservation was succesfully canceled."})
   example JSON.pretty_generate({"errors": "Reservation was unable to be canceled."})
+
   def destroy
     reservation = Reservation.find_by_token(params[:id])
     reservation.canceled!
@@ -66,6 +87,7 @@ class Api::V1::ReservationsController < ApplicationController
       render :json => {"errors": "Reservation was unable to be canceled."}, :status => :unprocessable_entity
     end
   end
+
 
   private
   def reservation_params

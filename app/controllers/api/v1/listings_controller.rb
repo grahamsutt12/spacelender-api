@@ -1,15 +1,18 @@
 class Api::V1::ListingsController < ApplicationController
-  before_filter :authenticate, :except => [:index, :show]
+  before_filter :authenticate, :except => [:show]
 
   api :GET, '/v1/listings', "Show all listings. Does not require authentication."
   description "Returns an array of all listing objects."
   see "listings#show", "To see the individual format of a single listing."
 
   def index
-    render :json => Listing.all, :status => :ok
+    render :json => @current_user.listings, :status => :ok
   end
 
 
+  def recent
+    render :json => Listing.all().limit(50).order("created_at DESC"), :status => :ok
+  end
 
 
   api :GET, '/v1/listings/:listing_slug', "Show a specific listing. Does not require authentication."
@@ -20,8 +23,6 @@ class Api::V1::ListingsController < ApplicationController
     listing = Listing.find(params[:id])
     render :json => listing, :status => :ok
   end
-
-
 
 
   api :POST, '/v1/listings', "Create a new listing."
@@ -67,8 +68,6 @@ class Api::V1::ListingsController < ApplicationController
   end
 
 
-
-
   api :PUT, '/v1/listings/:listing_slug', "Update a listing."
   see "listings#create", "Update and Create use the same JSON format. Refer to the listings#create example"
 
@@ -81,9 +80,6 @@ class Api::V1::ListingsController < ApplicationController
       render :json => {:errors => listing.errors}, :status => :unprocessable_entity
     end
   end
-
-
-
 
 
   api :DELETE, '/v1/listings/:listing_slug', "Delete a listing."
@@ -100,6 +96,7 @@ class Api::V1::ListingsController < ApplicationController
       render :json => {"errors": "The listing could not be deleted."}, :status => :unprocessable_entity
     end
   end
+
 
   private
   def listing_params

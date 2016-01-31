@@ -5,6 +5,23 @@ class Payment < ActiveRecord::Base
 
   before_create :generate_token
 
+
+  ##
+  # Process a charge for a payment. This is done in the background.
+  ##
+  def self.charge(reservation_id, payment_card)
+    ChargePaymentWorker.perform_async(reservation_id, payment_card)
+  end
+
+
+  ##
+  # Refund an exisiting payment. This is done in the background.
+  ##
+  def self.refund(payment_id)
+    RefundPaymentWorker.perform_async(payment.id)
+  end
+
+
   protected
   def generate_token
     self.token = loop do

@@ -1,6 +1,10 @@
 class Api::V1::ReservationMailer < ApplicationMailer
   default from: "SpaceLender"
 
+
+  ##
+  # Sends an email to notify the Lister who receives a request from a User.
+  ##
   def reservation_requested(user, reservation)
     @user = user
     @reservation = reservation

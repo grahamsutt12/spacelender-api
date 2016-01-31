@@ -4,10 +4,10 @@ class Api::V1::CardsController < ApplicationController
   api :GET, "/v1/users/:user_slug/cards", "Show all cards on file belonging to the current user."
   description "Below is an example of an expected response. Returns Array."
   example Card.example_response
+
   def index
     render :json => @current_user.cards, :status => :ok
   end
-
 
 
   api :POST, "/v1/users/:user_slug/cards", "Store a new card for the user."

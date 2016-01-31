@@ -13,6 +13,7 @@ class Api::V1::ImagesController < ApplicationController
   api :GET, '/v1/listings/:listing_slug/images', "Show all images for a specific listing."
   example Image.example_response("index")
   description "This request only returns images for listings, not users. Below is an example of the response."
+
   def index
     ##
     # Index will only display all of a listing's images
@@ -21,10 +22,10 @@ class Api::V1::ImagesController < ApplicationController
   end
 
 
-
   api :GET, '/v1/listings/:listing_slug/images/:id', "Show a specific image for a specific listing."
   example Image.example_response("show")
   description "This request only returns an image from a listing, not from a user. Below is an example of the response."
+
   def show
     ##
     # Show will only display a specified Listing's image
@@ -34,9 +35,13 @@ class Api::V1::ImagesController < ApplicationController
   end
 
 
+  ##
+  # ** FOR UPDATING IMAGES FOR USERS **
+  #
   # api :PUT, '/v1/users/:user_slug/images/:id', "Update user's profile image."
   # param :user_slug, String, "The user's slug."
   # param :id, :number, "The image's id."
+  ##
 
   api :PUT, '/v1/listings/:listing_slug/images/:id', "Update a specific image for a specific listing."
   example Image.example_request
@@ -63,6 +68,7 @@ class Api::V1::ImagesController < ApplicationController
   example JSON.pretty_generate({"errors" => "Image could not be deleted."})
   description "Below are the expected responses for successfully or unsuccessfully deleting an image."
   meta :important => "To delete a users image, use this request:   DELETE /v1/users/:user_slug/images/:id"
+
   def destroy
     image = get_image_from_model(params[:id])
 
@@ -79,6 +85,7 @@ class Api::V1::ImagesController < ApplicationController
     params.require(:image).permit(:id, :path, :caption)
   end
 
+
   def get_image_from_model(id)
     if @object.class.name == "Listing"
       image = @object.images.find(id)
@@ -88,6 +95,7 @@ class Api::V1::ImagesController < ApplicationController
 
     image
   end
+  
 
   def set_object
     klass = [User, Listing].detect{|c| params["#{c.name.underscore}_id"]}

@@ -19,12 +19,14 @@ class Api::V1::ReportsController < ApplicationController
     end
   end
 
+
   api :GET, "/v1/users/:user_slug/reports/:reference_token"
   description "User must have at least an \"employee\" or \"admin\" status (status: 1 or 2) to view a report. Below is an example of an expected repsonse."
   example Report.example_response
   def show
     render :json => @current_user.reports.find_by_ref_token(params[:id]), :status => :ok
   end
+  
 
   private
   def report_params

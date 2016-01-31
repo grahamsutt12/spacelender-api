@@ -5,10 +5,11 @@ class Api::V1::UsersController < ApplicationController
   api :GET, '/v1/users/:user_slug', "Show user profile."
   description "Below is an example of an expected response. Typically the user's profile image's caption will be null, as there is no real reason to have it."
   example User.example_response
-  def show
-    render :json => User.find(params[:id])
-  end
 
+  def show
+    user = User.find(params[:id])
+    render :json => user, :meta => {:auth_token => user.auth_token}
+  end
 
 
   api :POST, '/v1/users', "Create a new user. They will not be active until the user confirms through email."
@@ -26,6 +27,7 @@ class Api::V1::UsersController < ApplicationController
       param :path, String, "The absolute file path to the location of the profile image on your local machine for the new user.", :required => true
     end
   end
+
   def create
     user = User.new(user_params)
 
@@ -42,6 +44,7 @@ class Api::V1::UsersController < ApplicationController
   api :PUT, '/v1/users/:user_slug', "Update information about an existing user."
   description "Updating a user is almost exactly the same as creating one. Just make a PUT request instead and specify the user's slug in the URL."
   see "users#create", "How to create a New User request. Click the link to see an example on how to build your JSON request."
+
   def update
     if @current_user.update(user_params)
       render :json => user, :status => :ok
@@ -68,9 +71,8 @@ class Api::V1::UsersController < ApplicationController
   end
 
 
-
   api :GET, '/v1/users/:confirm_token/confirm_email', "Makes a user account active."
-  description "This request gets sent as a full URL to the new user's email address. When they click on it, their account will be activated. This will also respond with the user JSON object."
+  description "This request gets sent as a full URL to the new user's email address. When they click on it, their account will be activated. This will also respond with a User JSON object."
 
   def confirm_email
     user = User.find_by_confirm_token(params[:id])
@@ -83,6 +85,14 @@ class Api::V1::UsersController < ApplicationController
       render :json => {"errors": "User does not exist."}, :status => :unprocessable_entity
     end
   end
+
+
+  api :GET, '/v1/reservations', "Get a list of the current user's reservations."
+
+  def reservations
+    render :json => @current_user.reservations, :status => :ok
+  end
+
 
   private
   def user_params

@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       resources :users, :except => [:new, :edit] do
         member do
           get 'confirm_email'
+          get 'reservations/pending' => 'reservations#pending'
         end
 
         resources :messages, :except => [:new, :edit]
@@ -15,6 +16,10 @@ Rails.application.routes.draw do
       end
 
       resources :listings, :except => [:new, :edit] do
+        collection do
+          get 'recent'
+        end
+
         resources :reservations, :only => [:index, :show, :create, :destroy] do
           resources :payments, :only => [:create] do
             member do
@@ -27,6 +32,9 @@ Rails.application.routes.draw do
       end
 
       resources :sessions, :only => [:create, :destroy]
+
+      # Get current user's reservations
+      get 'reservations' => 'users#reservations'
     end
   end
 
