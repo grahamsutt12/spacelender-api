@@ -25,6 +25,8 @@ gem 'omniauth-stripe-connect'
 
 gem 'responders'
 
+gem 'thin'
+
 gem 'apipie-rails'
 
 gem 'rack-cors', :require => 'rack/cors'
