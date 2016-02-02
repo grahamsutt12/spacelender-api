@@ -96,6 +96,11 @@ GEM
     domain_name (0.5.25)
       unf (>= 0.0.5, < 1.0.0)
     erubis (2.7.0)
+    factory_girl (4.5.0)
+      activesupport (>= 3.0.0)
+    factory_girl_rails (4.5.0)
+      factory_girl (~> 4.5.0)
+      railties (>= 3.0.0)
     faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
     figaro (1.1.1)
@@ -119,6 +124,8 @@ GEM
     mime-types (2.6.2)
     mini_portile (0.6.2)
     minitest (5.8.2)
+    minitest-rg (5.2.0)
+      minitest (~> 5.0)
     multi_json (1.11.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -231,9 +238,12 @@ DEPENDENCIES
   capistrano-rails
   capistrano-rbenv!
   cloudinary
+  factory_girl_rails
   figaro
   friendly_id
   geocoder
+  minitest
+  minitest-rg
   omniauth-stripe-connect
   pg
   rack-cors

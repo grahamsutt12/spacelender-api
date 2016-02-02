@@ -42,6 +42,12 @@ group :development do
   gem 'capistrano-passenger'
 end
 
+group :development, :test do
+  gem 'factory_girl_rails'
+  gem 'minitest'
+  gem 'minitest-rg'
+end
+
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'
 

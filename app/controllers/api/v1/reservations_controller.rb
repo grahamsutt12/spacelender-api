@@ -64,6 +64,7 @@ class Api::V1::ReservationsController < ApplicationController
 
   # TODO: As a Lister, I want to be able to accept reservation requests.
   def accept
+    reservation = @current_user.reservations.find_by_token(params[:reservation_id])
   end
 
 

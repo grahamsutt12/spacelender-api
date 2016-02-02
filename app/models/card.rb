@@ -1,6 +1,10 @@
 class Card < ActiveRecord::Base
   belongs_to :user
 
+  validates :number, presence: true, length: { minimum: 13, maximum: 18 }
+  validates :exp_month, length: { minimum: 2, maximum: 2 }
+  validates :exp_year, length: { minimum: 2, maximum: 4 }
+
   ##
   # Use virtual attributes because we do not want to store the
   # user's credit card information on our servers. They will be
